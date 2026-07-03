@@ -5,14 +5,20 @@ import Image from "next/image";
 import { FaFacebookF, FaLinkedinIn, FaTwitter } from "react-icons/fa";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const doctors = [
-  { name: "Dr. Marcus Webb", role: "NEUROLOGY", img: "/Doctor1.jpg" },
-  { name: "Dr. James Carter", role: "CARDIOLOGY", img: "/Doctor2.jpg" },
-  { name: "Dr. Aisha Khan", role: "DERMATOLOGY", img: "/Doctor3.avif" },
-  { name: "Dr. Michael Lee", role: "ONCOLOGY", img: "/Doctor4.jpg" },
-  { name: "Dr. Priya Sharma", role: "PEDIATRICS", img: "/Doctor5.jpg" },
-  { name: "Dr. Daniel Osei", role: "ORTHOPEDICS", img: "/doctor6.webp" },
- 
+interface Doctor {
+  name: string;
+  role: string;
+  img: string;
+  imgPosition?: string; // e.g. "center top", "50% 20%" — tune per photo
+}
+
+const doctors: Doctor[] = [
+  { name: "Dr. Marcus Webb", role: "NEUROLOGY", img: "/Doctor1.jpg", imgPosition: "center top" },
+  { name: "Dr. James Carter", role: "CARDIOLOGY", img: "/Doctor2.jpg", imgPosition: "center 15%" },
+  { name: "Dr. Aisha Khan", role: "DERMATOLOGY", img: "/Doctor3.avif", imgPosition: "center top" },
+  { name: "Dr. Michael Lee", role: "ONCOLOGY", img: "/Doctor4.jpg", imgPosition: "center 20%" },
+  { name: "Dr. Priya Sharma", role: "PEDIATRICS", img: "/Doctor5.jpg", imgPosition: "center top" },
+  { name: "Dr. Daniel Osei", role: "ORTHOPEDICS", img: "/Doctor6.webp", imgPosition: "center top" },
 ];
 
 const PER_PAGE = 3;
@@ -23,15 +29,15 @@ export default function Doctors() {
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
 
- const goTo = (index: number) => {
-  if (index < 0) {
-    setPage(pageCount - 1);
-  } else if (index >= pageCount) {
-    setPage(0);
-  } else {
-    setPage(index);
-  }
-};
+  const goTo = (index: number) => {
+    if (index < 0) {
+      setPage(pageCount - 1);
+    } else if (index >= pageCount) {
+      setPage(0);
+    } else {
+      setPage(index);
+    }
+  };
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
@@ -90,17 +96,17 @@ export default function Doctors() {
                     .slice(pageIdx * PER_PAGE, pageIdx * PER_PAGE + PER_PAGE)
                     .map((doc, i) => (
                       <div key={i} className="text-center">
-                        <div className="overflow-hidden rounded-md">
-                          <div className="relative h-64 w-full">
-  <Image
-    src={doc.img}
-    alt={doc.name}
-    fill
-    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-    className="object-cover"
-  />
-</div>
+                        <div className="relative aspect-square w-full overflow-hidden rounded-xl">
+                          <Image
+                            src={doc.img}
+                            alt={doc.name}
+                            fill
+                            sizes="(max-width: 640px) 100vw, 300px"
+                            className="object-cover"
+                            style={{ objectPosition: doc.imgPosition ?? "center top" }}
+                          />
                         </div>
+
                         <h3 className="mt-4 text-sm font-bold uppercase text-[#0c1559]">
                           {doc.name}
                         </h3>
@@ -121,12 +127,13 @@ export default function Doctors() {
                           )}
                         </div>
 
+                        
                         <a
-                          href="#profile"
-                          className="mt-4 inline-block rounded-full bg-sky-100 px-5 py-2 text-xs font-semibold text-[#0c1559] hover:bg-sky-200"
-                        >
-                          View Profile
-                        </a>
+  href="#profile"
+  className="mt-4 inline-block rounded-full bg-sky-100 px-5 py-2 text-xs font-semibold text-[#0c1559] transition hover:bg-sky-200"
+>
+  View Profile
+</a>
                       </div>
                     ))}
                 </div>
@@ -138,19 +145,19 @@ export default function Doctors() {
           {pageCount > 1 && (
             <>
               <button
-  aria-label="Previous doctors"
-  onClick={() => goTo(page - 1)}
-  className="absolute left-0 top-1/2 hidden -translate-x-4 -translate-y-1/2 items-center justify-center rounded-full bg-white p-2 text-[#0c1559] shadow-md transition hover:scale-110 sm:flex"
->
-  <ChevronLeft className="h-5 w-5" />
-</button>
+                aria-label="Previous doctors"
+                onClick={() => goTo(page - 1)}
+                className="absolute left-0 top-1/2 hidden -translate-x-4 -translate-y-1/2 items-center justify-center rounded-full bg-white p-2 text-[#0c1559] shadow-md transition hover:scale-110 sm:flex"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
               <button
-  aria-label="Next doctors"
-  onClick={() => goTo(page + 1)}
-  className="absolute right-0 top-1/2 hidden -translate-y-1/2 translate-x-4 items-center justify-center rounded-full bg-white p-2 text-[#0c1559] shadow-md transition hover:scale-110 sm:flex"
->
-  <ChevronRight className="h-5 w-5" />
-</button>
+                aria-label="Next doctors"
+                onClick={() => goTo(page + 1)}
+                className="absolute right-0 top-1/2 hidden -translate-y-1/2 translate-x-4 items-center justify-center rounded-full bg-white p-2 text-[#0c1559] shadow-md transition hover:scale-110 sm:flex"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
             </>
           )}
         </div>
